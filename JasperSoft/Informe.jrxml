@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4_Landscape" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="8be26fdb-6724-4597-bb2e-ab6e99a68fd1">
+	<parameter name="Cantidad_General" class="java.lang.String"/>
+	<parameter name="Cantidad_VIP" class="java.lang.String"/>
+	<parameter name="Cantidad_AbonoVIP" class="java.lang.String"/>
+	<parameter name="Precio_General" class="java.lang.String"/>
+	<parameter name="Precio_VIP" class="java.lang.String"/>
+	<parameter name="Precio_AbonoVIP" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="70" y="9" width="430" height="60" uuid="ab26e8d0-0bb3-451c-912a-da0a908db491">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<textElement>
+					<font fontName="Yu Gothic UI Semibold" size="40"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INFORME DE VENTAS"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="66" splitType="Stretch">
+			<textField>
+				<reportElement x="20" y="18" width="131" height="30" uuid="9ff9f2bc-b46b-4adc-96f4-a8d75631d49d"/>
+				<textElement>
+					<font size="23"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ENTRADA"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="18" width="131" height="30" uuid="057cc491-9fdd-44a1-9de3-3e277dad14a2"/>
+				<textElement>
+					<font size="23"/>
+				</textElement>
+				<textFieldExpression><![CDATA["CANTIDAD"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="420" y="18" width="131" height="30" uuid="c408d6ba-a891-43f0-a191-2584d714c92f"/>
+				<textElement>
+					<font size="23"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PRECIO"]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="245" splitType="Stretch">
+			<textField>
+				<reportElement x="38" y="10" width="95" height="30" uuid="747f7d0c-21e0-4622-ae29-b5ba9011dcb6"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA["General"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="58" y="60" width="55" height="30" uuid="cb3402bc-60f8-4131-969c-97069e98ad4f"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA["VIP"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="110" width="110" height="30" uuid="e2717309-215e-493a-af15-d15ffe1b5dfe"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Abono VIP"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="270" y="10" width="30" height="30" uuid="8e7a293e-bba8-4b7a-a434-77364708d3d1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Cantidad_General}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="60" width="27" height="30" uuid="700b37d3-6b67-4d28-a3da-7d5b4ee36705">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Cantidad_VIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="272" y="110" width="27" height="30" uuid="221f8d8e-e0bc-461b-9522-30b3553bb922">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Cantidad_AbonoVIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="10" width="91" height="30" uuid="fa66e978-0602-4c27-ac35-852f9cac1116">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Precio_General}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="60" width="89" height="30" uuid="3cea6553-c19f-4eb7-b30a-d6b848fd059e">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Precio_VIP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="462" y="110" width="89" height="30" uuid="0a8d718b-5178-4c23-b9e5-e04c7096a739">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Precio_AbonoVIP}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,4 +1,5 @@
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -11,6 +12,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -24,6 +27,15 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
+
+
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
 
 public class InterfazCliente {
 
@@ -40,6 +52,7 @@ public class InterfazCliente {
     private boolean temporizadorActivo = false;
     
     private ArrayList<String> entradasReservadas = new ArrayList<>();
+    private ArrayList<String> nombresArchivosGenerados = new ArrayList<>();
     private JComboBox<String> tipoEntradaComboBox;
     private JComboBox<String> cantidadEntradaComboBox;
     
@@ -227,25 +240,43 @@ public class InterfazCliente {
             e.printStackTrace();
         }
     }
-
-    private void agregarEntradas() {
+    
+    private void agregarEntradas() {    	
         if (tipoEntradaComboBox.getSelectedIndex() == -1 || cantidadEntradaComboBox.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(frame, "Por favor seleccione el tipo y la cantidad de entradas.");
             return;
         }
 
         String tipoEntrada = (String) tipoEntradaComboBox.getSelectedItem();
+        int cantidadSeleccionada = Integer.parseInt((String) cantidadEntradaComboBox.getSelectedItem());
         String cantidadEntrada = (String) cantidadEntradaComboBox.getSelectedItem();
 
+        int cantidadTotal = 0;
+        
+        for (String entrada : entradasReservadas) {
+            String[] parts = entrada.split(" - Cantidad: ");
+            cantidadTotal += Integer.parseInt(parts[1]);
+        }
+
+        if (cantidadTotal + cantidadSeleccionada > 3) {
+            JOptionPane.showMessageDialog(frame, "No puede reservar más de tres entradas en total.");
+            tipoEntradaComboBox.setSelectedIndex(-1);
+            cantidadEntradaComboBox.setSelectedIndex(-1);
+            return;
+        }
+        
         String entrada = tipoEntrada + " - Cantidad: " + cantidadEntrada; 
         entradasAgregadasTextArea.append(entrada + "\n");
         
         entradasReservadas.add(entrada);
+        
+        System.out.println("Entrada agregada: " + entrada);
 
         tipoEntradaComboBox.setSelectedIndex(-1);
         cantidadEntradaComboBox.setSelectedIndex(-1);
         
         reservarButton.setEnabled(true); 
+   
     }
 
     private void reservarEntradas() {
@@ -266,27 +297,90 @@ public class InterfazCliente {
         System.out.println("Enviando mensaje al servidor para reservar entradas: " + entradasReservadas);
         System.out.println();
         
-        entradasReservadas.clear();
+       //entradasReservadas.clear();
         
         addButton.setEnabled(false);
         reservarButton.setEnabled(false);
         comprarButton.setVisible(true);
+        comprarButton.setEnabled(true);
     }
 
-    private void comprarEntradas() {
+    private void comprarEntradas() {    	
     	System.out.println("El cliente ha comprado");
     	enviarMensaje("comprar\n");
     	detenerTemporizador();
+    	
+    	System.out.println("Array " + entradasReservadas.size());
+    	
+    	generarPDF();
+    	
+    	mostrarPDF();
+    	
     	JOptionPane.showMessageDialog(frame, "Compra realizada.");
     	
     	entradasAgregadasTextArea.setText("");
-        entradasReservadas.clear();
-        
+    	comprarButton.setEnabled(false);
         progressBar.setVisible(false);
+
+    	entradasReservadas.clear();
     }
 
+    private void generarPDF() {
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport("JasperSoft/Entrada.jrxml");
 
-    private boolean validarEntradas() {
+            int entryIndex = 1;
+            
+            for (String entrada : entradasReservadas) {
+                String[] parts = entrada.split(" - Cantidad: ");
+                String entrada1 = parts[0].split("\\|")[0].trim();
+                String tipoEntrada = parts[0];
+                int cantidad = Integer.parseInt(parts[1]);
+                String precio = "";
+
+                if (tipoEntrada.equals("Entrada General | 60,00 €")) {
+                    precio = "60.00";
+                } else if (tipoEntrada.equals("Entrada VIP | 100,00 €")) {
+                    precio = "100.00";
+                } else if (tipoEntrada.equals("Abono VIP | 150,00 €")) {
+                    precio = "150.00";
+                }
+
+                for (int i = 0; i < cantidad; i++) {
+                    Map<String, Object> parameters = new HashMap<>();
+                    parameters.put("Entrada", entrada1);
+                    parameters.put("Dinero", precio);
+
+                    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+                    
+                    // Exportar el informe JasperPrint a un archivo PDF
+                    String nombreArchivo = entrada1 + "_entrada" + entryIndex + ".pdf";
+                    JasperExportManager.exportReportToPdfFile(jasperPrint, "pdf/" + nombreArchivo);
+                    
+                    nombresArchivosGenerados.add(nombreArchivo);
+                    
+                    entryIndex++;
+                }
+            }
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void mostrarPDF() {
+        try {
+            for (String nombreArchivo : nombresArchivosGenerados) {
+                File pdfFile = new File("pdf/" + nombreArchivo);
+                if (pdfFile.exists() && pdfFile.isFile()) {
+                    Desktop.getDesktop().open(pdfFile);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+	private boolean validarEntradas() {
         if (entradasReservadas.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "No ha agregado ninguna entrada para reservar.");
             return false;
@@ -297,10 +391,13 @@ public class InterfazCliente {
     private void iniciarTemporizador() {
         if (!temporizadorActivo) {
             temporizadorActivo = true;
+            tiempoRestante = 15000;
+            progressBar.setValue(tiempoRestante);
+            
             timer = new Timer(1000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    tiempoRestante -= 1000;
+                	tiempoRestante -= 1000;
                     progressBar.setValue(tiempoRestante);
 
                     if (tiempoRestante <= 0) {

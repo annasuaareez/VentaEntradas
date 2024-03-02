@@ -1,3 +1,5 @@
+
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -7,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -18,6 +21,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,11 +29,20 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+
 public class InterfazServidor {
 
     private JFrame frame;
     private JPanel tipoTicketsContainerPanel;
 	private JPanel containerPanel;
+	private JButton generarInformeButton;
 
 	private int entradasTotales = 170;
 
@@ -130,6 +143,13 @@ public class InterfazServidor {
         addContainer(tipoTicketsContainerPanel, "Abono VIP", abonosVIP, "Photos\\pie-chart.png");
         
         mainPanel.add(tipoTicketsContainerPanel);
+        
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        
+        generarInformeButton = new JButton("Generar Informe"); 
+        generarInformeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        generarInformeButton.addActionListener(e -> generarInforme()); 
+        mainPanel.add(generarInformeButton);
 
         frame.getContentPane().add(mainPanel);
         frame.setVisible(true);
@@ -347,6 +367,65 @@ public class InterfazServidor {
 		} finally {
 			lock.unlock();
 		}
+    }
+    
+    private void generarInforme() {
+        // Implementar la lógica para generar un informe
+        System.out.println("Generando informe...");
+        
+        String entradasGeneralesVendidas = String.valueOf(entradasCompradas.getOrDefault("Entrada General", 0));
+        String entradasVIPVendidas = String.valueOf(entradasCompradas.getOrDefault("Entrada VIP", 0));
+        String abonosVIPVendidos = String.valueOf(entradasCompradas.getOrDefault("Abono VIP", 0));
+        
+        String precioEntradasGenerales = String.valueOf(precioEntradaGeneral * Integer.parseInt(entradasGeneralesVendidas));
+        String precioEntradasVIP = String.valueOf(precioEntradaVIP * Integer.parseInt(entradasVIPVendidas));
+        String precioAbonosVIP = String.valueOf(precioAbonoVIP * Integer.parseInt(abonosVIPVendidos));
+        
+        generarPDF(entradasGeneralesVendidas, entradasVIPVendidas, abonosVIPVendidos, precioEntradasGenerales, precioEntradasVIP, precioAbonosVIP);
+        
+        mostrarPDF();
+    }
+    
+    private void generarPDF(String entradasGeneralesVendidas, String entradasVIPVendidas, String abonosVIPVendidos,
+            String precioEntradasGenerales, String precioEntradasVIP, String precioAbonosVIP) {
+        try {
+            JasperReport jasperReport = JasperCompileManager.compileReport("JasperSoft/Informe.jrxml");
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("Cantidad_General", entradasGeneralesVendidas);
+            parameters.put("Cantidad_VIP", entradasVIPVendidas);
+            parameters.put("Cantidad_AbonoVIP", abonosVIPVendidos);
+            
+            parameters.put("Precio_General", precioEntradasGenerales);
+            parameters.put("Precio_VIP", precioEntradasVIP);
+            parameters.put("Precio_AbonoVIP", precioAbonosVIP);
+            
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+            
+            String pdfPath = "pdf/Informe.pdf";
+            JasperExportManager.exportReportToPdfFile(jasperPrint, pdfPath);
+            
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private void mostrarPDF() {
+        try {
+            File pdfDirectory = new File("pdf/");
+            if (pdfDirectory.exists() && pdfDirectory.isDirectory()) {
+                File[] pdfFiles = pdfDirectory.listFiles();
+                if (pdfFiles != null) {
+                    for (File pdfFile : pdfFiles) {
+                        if (pdfFile.isFile() && pdfFile.getName().equals("Informe.pdf")) {
+                            Desktop.getDesktop().open(pdfFile);
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

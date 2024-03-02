@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.21.2.final using JasperReports Library version 6.21.2-8434a0bd7c3bbc37cbf916f2968d35e4b165821a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Entrada" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b0c50e00-62af-4bd7-bc1f-b3a6f63fc23e">
+	<parameter name="Entrada" class="java.lang.String"/>
+	<parameter name="Dinero" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<title>
+		<band height="130" splitType="Stretch">
+			<line>
+				<reportElement x="-3" y="100" width="560" height="1" uuid="d683b08a-7225-4915-b53b-c43717bdf259">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<image>
+				<reportElement x="10" y="0" width="100" height="89" uuid="7e0067dd-cb6c-4fab-9ef7-b20ff244bc0c"/>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/logo.png"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<detail>
+		<band height="600" splitType="Stretch">
+			<textField>
+				<reportElement x="280" y="0" width="264" height="100" uuid="2d3e1c3c-de56-4c07-aa08-b5028eeb4f51"/>
+				<textElement>
+					<font fontName="Arial Black" size="30"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SoundWave Festival"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="280" y="100" width="275" height="1" uuid="74281ed1-fd3b-4e0a-84e1-e636dbc61156">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<image>
+				<reportElement x="280" y="120" width="33" height="33" uuid="336d27cb-b179-4868-837e-2ce40d247cc9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/calendar.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="330" y="125" width="196" height="30" uuid="e6e337b4-3113-478f-842b-a30218b7935c">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["29/05/2024 a las 18:30"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="10" y="7" width="250" height="170" uuid="f4f12f81-0e3c-4108-88c6-e5cf34ead8da">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/cartel1.png"]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="280" y="165" width="33" height="33" uuid="12acbfa4-781a-4693-9c29-ed08806641c9">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/location.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="330" y="170" width="196" height="30" uuid="ab4c9d1e-b365-4cd0-ad97-808290fd3306">
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Gdynia, Polonia"]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="280" y="210" width="33" height="33" uuid="8deafca8-3e5f-447a-a89d-7df0f9afd908">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/ticket.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="330" y="215" width="196" height="30" uuid="44f05ed8-2024-40d6-95e0-32da9c6e83b6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Entrada}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="280" y="255" width="33" height="33" uuid="8167f322-32a2-4bfa-a7dc-ad2632cbe742">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["D:/Aplicaciones/Eclipse/eclipse-workspace/VentaEntradas/Photos/credit-card.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="330" y="260" width="196" height="30" uuid="208b1028-9f60-40f0-b5c7-f56bf5ae1e3c">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{Dinero} + " €"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="282" y="560" width="275" height="1" uuid="8354a3f9-74ef-4d18-b64d-752b5177ac8f">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+			<textField>
+				<reportElement x="290" y="320" width="254" height="30" uuid="62904a0e-9f09-4ffc-aee1-7f04a50dcc8a"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Condiciones legales"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="313" y="360" width="232" height="70" uuid="bdbaa4e9-8f53-4614-a1c0-d495364415d4"/>
+				<textElement>
+					<font size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Solo se considerará válida la primera copia presentada de esta entrada."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="313" y="430" width="232" height="80" uuid="993646c6-80ed-4601-bb0d-1ab7ea1a4e8c"/>
+				<textElement>
+					<font size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No recortes esta entrada, solo tiene validez si está completa."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="500" width="265" height="90" uuid="5d7404ba-7528-4c38-bcfd-f3e0d742e60a"/>
+				<textElement>
+					<font fontName="Arial Black" size="17"/>
+				</textElement>
+				<textFieldExpression><![CDATA["No se admiten devoluciones de entradas."]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="285" y="305" width="275" height="1" uuid="f1c4940a-a1b0-400b-a397-c33e5d9f10df">
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+			</line>
+		</band>
+	</detail>
+</jasperReport>
