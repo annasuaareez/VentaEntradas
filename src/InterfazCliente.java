@@ -37,6 +37,21 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
+/**
+ * La clase InterfazCliente representa la interfaz grafica de un sistema de gestion de reservas y compras de entradas.
+ * Permite al usuario agregar, reservar y comprar entradas para un evento. La interfaz incluye opciones para seleccionar
+ * el tipo y la cantidad de entradas, asi como botones para agregar, reservar y comprar. Tambien muestra un area de texto
+ * para visualizar las entradas agregadas, una barra de progreso para el tiempo de reserva y mensajes de confirmacion para
+ * las acciones realizadas. Ademas, la clase se encarga de la comunicacion con el servidor para enviar mensajes relacionados
+ * con la reserva y compra de entradas, asi como de la generacion y visualizacion de archivos PDF con las entradas reservadas.
+ * El codigo se estructura en metodos que realizan funciones especificas, como agregar, reservar y comprar entradas, gestionar
+ * el temporizador de reserva, limpiar la reserva, cargar fuentes personalizadas y enviar mensajes al servidor. 
+ * 
+ * @author Ana Suarez
+ * 
+ */
+
+
 public class InterfazCliente {
 
     private JFrame frame;
@@ -150,7 +165,7 @@ public class InterfazCliente {
         JPanel infoPanel = new JPanel();
         infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        compraInfoLabel = new JLabel("Información Entradas"); // Modificación: se inicializa aquí
+        compraInfoLabel = new JLabel("Información Entradas"); // Modificación: se inicializa aqui
         compraInfoLabel.setFont(loadCustomFont(18, "manrope.ttf"));
         compraInfoLabel.setBorder(BorderFactory.createEmptyBorder(60, 50, 0, 0));
         compraInfoLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -207,6 +222,10 @@ public class InterfazCliente {
 
         frame.getContentPane().add(mainPanel);
 
+        /**
+         * Configura un ActionListener para el boton "Añadir".
+         * Cuando se hace clic en el boton, llama al metodo agregarEntradas().
+         */
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -214,6 +233,10 @@ public class InterfazCliente {
             }
         });
 
+        /**
+         * Configura un ActionListener para el boton "Reservar".
+         * Cuando se hace clic en el boton, llama al metodo reservarEntradas().
+         */
         reservarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -221,6 +244,10 @@ public class InterfazCliente {
             }
         });
 
+        /**
+         * Configura un ActionListener para el boton "Comprar".
+         * Cuando se hace clic en el boton, llama al metodo comprarEntradas() y detiene el temporizador.
+         */
         comprarButton.addActionListener(new ActionListener() {
             
 			@Override
@@ -230,6 +257,14 @@ public class InterfazCliente {
             }
         });
     }
+
+    /**
+     * Se encarga de conectar con el servidor.
+     * Intenta establecer una conexión con el servidor en el localhost y el puerto 124.
+     * Obtiene el flujo de salida del socket para enviar mensajes al servidor.
+     * Imprime un mensaje indicando que la conexion con el servidor se ha establecido correctamente.
+     * En caso de excepcion, imprime los errores.
+     */
 
     private void conectarServidor() {
         try {
@@ -241,6 +276,14 @@ public class InterfazCliente {
         }
     }
     
+    
+    /**
+     * Se encarga de agregar entradas al sistema de reservas.
+     * Verifica la seleccion del tipo y la cantidad de entradas, mostrando un mensaje de error
+     * si no se han seleccionado correctamente. Controla tambien que no se exceda el limite
+     * maximo de tres entradas en total. Actualiza la interfaz de usuario mostrando las entradas
+     * agregadas en un área de texto y habilitando el boton de reservar cuando corresponde.
+     */
     private void agregarEntradas() {    	
         if (tipoEntradaComboBox.getSelectedIndex() == -1 || cantidadEntradaComboBox.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(frame, "Por favor seleccione el tipo y la cantidad de entradas.");
@@ -279,6 +322,14 @@ public class InterfazCliente {
    
     }
 
+    /**
+     * Se encarga de reservar las entradas seleccionadas por el cliente.
+     * Imprime un mensaje por consola indicando que el cliente ha realizado una reserva.
+     * Verifica la validez de las entradas seleccionadas utilizando el metodo validarEntradas().
+     * Muestra una barra de progreso y inicia un temporizador.
+     * Envia un mensaje al servidor para reservar cada entrada individualmente.
+     * Deshabilita los botones de agregar y reservar, y habilita el boton de comprar.
+     */
     private void reservarEntradas() {
     	System.out.println("El cliente ha reservado");
         if (!validarEntradas())
@@ -305,6 +356,18 @@ public class InterfazCliente {
         comprarButton.setEnabled(true);
     }
 
+    /**
+     * Se encarga de realizar la compra de las entradas seleccionadas por el cliente.
+     * Imprime un mensaje por consola indicando que el cliente ha realizado una compra.
+     * Envia un mensaje al servidor para confirmar la compra.
+     * Detiene el temporizador utilizado para la reserva de entradas.
+     * Genera un archivo PDF con las entradas reservadas.
+     * Muestra el archivo PDF generado al cliente.
+     * Muestra un mensaje de confirmación de la compra.
+     * Limpia el área de texto de las entradas agregadas y deshabilita el boton de comprar.
+     * Oculta la barra de progreso.
+     * Limpia el arreglo de entradas reservadas.
+     */
     private void comprarEntradas() {    	
     	System.out.println("El cliente ha comprado");
     	enviarMensaje("comprar\n");
@@ -325,6 +388,14 @@ public class InterfazCliente {
     	entradasReservadas.clear();
     }
 
+    /**
+     * Se encarga de generar archivos PDF con las entradas reservadas.
+     * Compila el archivo JRXML que contiene el diseño del informe utilizando JasperSoft.
+     * Itera sobre las entradas reservadas y genera un archivo PDF para cada una de ellas.
+     * Asigna un precio al tipo de entrada y utiliza este valor en el informe.
+     * Los archivos PDF se guardan en la carpeta "pdf" con nombres descriptivos.
+     * Agrega los nombres de los archivos generados a una lista para su posterior uso.
+     */
     private void generarPDF() {
         try {
             JasperReport jasperReport = JasperCompileManager.compileReport("JasperSoft/Entrada.jrxml");
@@ -367,6 +438,12 @@ public class InterfazCliente {
         }
     }
     
+    /**
+     * Se encarga de mostrar los archivos PDF generados al cliente.
+     * Itera sobre los nombres de los archivos PDF generados.
+     * Verifica si el archivo existe y es un archivo valido.
+     * Abre el archivo PDF utilizando el programa predeterminado del sistema.
+     */
     private void mostrarPDF() {
         try {
             for (String nombreArchivo : nombresArchivosGenerados) {
@@ -380,6 +457,12 @@ public class InterfazCliente {
         }
     }
 
+    /**
+     * Se encarga de validar las entradas antes de proceder con la reserva.
+     * Verifica si la lista de entradas reservadas esta vacia.
+     * Muestra un mensaje de error si no se han agregado entradas para reservar.
+     * @return true si las entradas estan validadas correctamente, de lo contrario, devuelve false.
+     */
 	private boolean validarEntradas() {
         if (entradasReservadas.isEmpty()) {
             JOptionPane.showMessageDialog(frame, "No ha agregado ninguna entrada para reservar.");
@@ -388,6 +471,16 @@ public class InterfazCliente {
         return true;
     }
     
+	/**
+	 * Se encarga de iniciar el temporizador para la reserva de entradas.
+	 * Verifica si el temporizador está activo antes de iniciarlo.
+	 * Establece el tiempo restante en 15000 milisegundos y actualiza el valor de la barra de progreso.
+	 * Crea un nuevo objeto Timer que se ejecuta cada segundo.
+	 * Durante cada ejecución del temporizador, se reduce en 1000 milisegundos el tiempo restante
+	 * y se actualiza el valor de la barra de progreso.
+	 * Si el tiempo restante llega a cero, se detiene el temporizador, se envia un mensaje de cancelación
+	 * al servidor, se muestra un mensaje de advertencia al cliente y se limpia la reserva.
+	 */
     private void iniciarTemporizador() {
         if (!temporizadorActivo) {
             temporizadorActivo = true;
@@ -412,6 +505,11 @@ public class InterfazCliente {
         }
     }
     
+    /**
+     * Se encarga de detener el temporizador utilizado para la reserva de entradas.
+     * Verifica si el temporizador está activo antes de detenerlo.
+     * Detiene el temporizador y establece la bandera de temporizador activo a false.
+     */
     private void detenerTemporizador() {
         if (temporizadorActivo) {
             timer.stop();
@@ -419,6 +517,15 @@ public class InterfazCliente {
         }
     }
     
+    /**
+     * Se encarga de limpiar la reserva de entradas.
+     * Limpia el area de texto donde se muestran las entradas agregadas.
+     * Limpia la lista de entradas reservadas.
+     * Deshabilita los botones de reservar y comprar.
+     * Establece la bandera de temporizador activo a false.
+     * Habilita el botón de agregar.
+     * Oculta la barra de progreso.
+     */
     private void limpiarReserva() {
         entradasAgregadasTextArea.setText("");
         entradasReservadas.clear();
@@ -429,6 +536,13 @@ public class InterfazCliente {
         progressBar.setVisible(false);
     }
     
+    /**
+     * Se encarga de enviar un mensaje al servidor.
+     * Toma como parámetro el mensaje a enviar.
+     * Intenta escribir el mensaje en el flujo de salida y lo envía.
+     * En caso de excepcion de entrada/salida, imprime el error.
+     * @param mensaje El mensaje a enviar al servidor.
+     */
     private void enviarMensaje(String mensaje) {
         try {
             outputStream.write(mensaje.getBytes());
@@ -438,6 +552,17 @@ public class InterfazCliente {
         }
     }
     
+    /**
+     * Se encarga de cargar una fuente personalizada.
+     * Toma como parámetros el tamaño de la fuente y el nombre del archivo de fuente.
+     * Intenta cargar el archivo de fuente desde la carpeta "font".
+     * Crea una instancia de la fuente a partir del archivo de fuente cargado.
+     * Devuelve la fuente personalizada con el tamaño especificado.
+     * En caso de excepción de formato de fuente o de entrada/salida, imprime los errores.
+     * @param size El tamaño de la fuente.
+     * @param fontFileName El nombre del archivo de fuente.
+     * @return La fuente personalizada cargada.
+     */
     private Font loadCustomFont(int size, String fontFileName) {
         Font customFont = null;
         try {

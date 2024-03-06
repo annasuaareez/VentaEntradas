@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -37,6 +35,17 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 
+/**
+ * La clase InterfazServidor implementa la interfaz grafica de usuario para un sistema de gestion de tickets.
+ * Permite realizar reservas y compras de entradas, generar informes de ventas y visualizarlos en formato PDF.
+ * El servidor TCP incorporado maneja las conexiones de los clientes y coordina las operaciones del sistema.
+ * La interfaz se actualiza dinamicamente para reflejar las cantidades de entradas disponibles y los ingresos totales.
+ * Ademas, se utilizan bloqueos de sincronizacion para garantizar la consistencia de los datos compartidos entre hilos.
+ * 
+ * @author annas
+ * 
+ */
+
 public class InterfazServidor {
 
     private JFrame frame;
@@ -60,19 +69,35 @@ public class InterfazServidor {
     private Map<String, Integer> entradasCompradas = new HashMap<>();
     
     private final ReentrantLock lock = new ReentrantLock();
-                
+       
+    /**
+     * Devuelve el numero total de entradas disponibles.
+     * @return El numero total de entradas disponibles.
+     */
     public int getEntradasDisponibles() {
         return entradasTotales;
     }
 
+    /**
+     * Devuelve el numero de entradas generales disponibles.
+     * @return El numero de entradas generales disponibles.
+     */
     public int getEntradasGeneralesDisponibles() {
         return entradasGenerales;
     }
 
+    /**
+     * Devuelve el numero de entradas VIP disponibles.
+     * @return El numero de entradas VIP disponibles.
+     */
     public int getEntradasVIPDisponibles() {
         return entradasVIP;
     }
 
+    /**
+     * Devuelve el numero de abonos VIP disponibles.
+     * @return El numero de abonos VIP disponibles.
+     */
     public int getAbonosVIPDisponibles() {
         return abonosVIP;
     }
@@ -155,6 +180,14 @@ public class InterfazServidor {
         frame.setVisible(true);
     }
 
+    /**
+     * Agrega un contenedor al panel principal de la interfaz grafica.
+     * El contenedor incluye un titulo, un numero y un icono.
+     * @param parentPanel El panel principal al que se agrega el contenedor.
+     * @param title El titulo del contenedor.
+     * @param number El numero que se muestra en el contenedor.
+     * @param iconFileName El nombre del archivo de icono para el contenedor.
+     */
     private void addContainer(JPanel parentPanel, String title, int number, String iconFileName) {
         JPanel containerPanel = new JPanel();
         containerPanel.setBackground(Color.WHITE);
@@ -194,6 +227,14 @@ public class InterfazServidor {
         }
     }
 
+    /**
+     * Inicia el servidor TCP en el puerto 124 y espera conexiones de clientes.
+     * Muestra un mensaje indicando que el servidor se ha iniciado correctamente y esta esperando conexiones.
+     * Utiliza un bucle infinito para aceptar multiples conexiones de clientes de forma concurrente.
+     * Cuando un cliente se conecta, muestra un mensaje indicando la conexion del nuevo cliente.
+     * Crea un nuevo hilo para manejar las operaciones del cliente y lo inicia.
+     * En caso de excepcion de entrada/salida al abrir el servidor, imprime los errores.
+     */
     public void startServer() {
         try (ServerSocket serverSocket = new ServerSocket(124)) {
             System.out.println("Servidor TCP iniciado. Esperando conexiones...");
@@ -212,6 +253,17 @@ public class InterfazServidor {
         }
     }
         
+    /**
+     * Se encarga de cargar una fuente personalizada.
+     * Toma como parámetros el tamaño de la fuente y el nombre del archivo de fuente.
+     * Intenta cargar el archivo de fuente desde la carpeta "font".
+     * Crea una instancia de la fuente a partir del archivo de fuente cargado.
+     * Devuelve la fuente personalizada con el tamaño especificado.
+     * En caso de excepcion de formato de fuente o de entrada/salida, imprime los errores.
+     * @param size El tamaño de la fuente.
+     * @param fontFileName El nombre del archivo de fuente.
+     * @return La fuente personalizada cargada.
+     */
     private Font loadCustomFont(int size, String fontFileName) {
         Font customFont = null;
         try {
@@ -226,15 +278,28 @@ public class InterfazServidor {
         return customFont.deriveFont(Font.PLAIN, size);
     }
     
+    /**
+     * Clase interna que representa un hilo de cliente para manejar la comunicacion con un cliente.
+     * Se encarga de recibir mensajes del cliente, procesarlos y actualizar la interfaz del servidor según sea necesario.
+     */
     private class ClientThread extends Thread {
         private final Socket socket;
         
         private Map<String, Integer> reservasClienteLocal = new HashMap<>();
         
+        /**
+         * Constructor de la clase ClientThread.
+         * Toma como parametro el socket del cliente con el que se va a comunicar.
+         * @param socket El socket del cliente.
+         */
         public ClientThread(Socket socket) {
             this.socket = socket;
         }
 
+        /**
+         * Metodo run del hilo de cliente.
+         * Se encarga de recibir mensajes del cliente, procesarlos y actualizar la interfaz del servidor segun sea necesario.
+         */
         @Override
         public void run() {
             try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
@@ -319,6 +384,16 @@ public class InterfazServidor {
         }
     } 
     
+    /**
+     * Calcula el precio total de todas las entradas reservadas y compradas por el cliente.
+     * Este metodo toma como parametro un mapa que contiene las reservas locales del cliente,
+     * donde la clave es el tipo de entrada y el valor es la cantidad de entradas reservadas.
+     * El precio total se calcula sumando el precio de todas las entradas generales, VIP y abonos VIP,
+     * tanto las reservadas como las compradas.
+     * Ademas, se imprimen en la consola los precios totales calculados para proporcionar informacion adicional.
+     * 
+     * @param reservasClienteLocal Mapa que contiene las reservas locales del cliente.
+     */
     private synchronized void calcularPrecioTotal(Map<String, Integer> reservasClienteLocal) {
         int precioEntradasGeneralesReservadas = precioEntradaGeneral * (reservasClienteLocal.getOrDefault("Entrada General", 0));
         int precioEntradasVIPReservadas = precioEntradaVIP * (reservasClienteLocal.getOrDefault("Entrada VIP", 0));
@@ -333,7 +408,12 @@ public class InterfazServidor {
 
         System.out.println("Precio Total = " + precioTotal);
     }
-        
+       
+    /**
+     * Se encarga de actualizar la interfaz grafica del servidor con las cantidades actualizadas de entradas disponibles
+     * despues de que un cliente haya realizado una reserva o una compra. Ademas, recalcula los ingresos totales teniendo en cuenta
+     * las nuevas reservas y compras realizadas por el cliente.
+     */
     private synchronized void actualizarInterfaz() {
         // Actualizar la interfaz del servidor con las nuevas cantidades de entradas disponibles
         lock.lock();
@@ -353,6 +433,11 @@ public class InterfazServidor {
 		} 
     }
 	
+    /**
+     * Se encarga de actualizar la interfaz del servidor con los ingresos totales obtenidos hasta el momento.
+     * Actualiza el contenedor que muestra los ingresos totales y la capacidad total del evento. Utiliza bloqueos de
+     * sincronizacion para garantizar la consistencia de los datos al actualizar la interfaz.
+     */
     private synchronized void actualizarIngresosTotales() {
         lock.lock();
         try {
@@ -369,6 +454,12 @@ public class InterfazServidor {
 		}
     }
     
+    /**
+     * Se encarga de generar un informe con la cantidad de entradas vendidas y los ingresos totales
+     * obtenidos hasta el momento. Utiliza los datos almacenados sobre las entradas vendidas y los precios de cada tipo
+     * de entrada para calcular los ingresos generados por la venta de entradas. Luego, genera un archivo PDF con esta
+     * informacion y lo muestra al usuario.
+     */
     private void generarInforme() {
         // Implementar la lógica para generar un informe
         System.out.println("Generando informe...");
@@ -386,6 +477,19 @@ public class InterfazServidor {
         mostrarPDF();
     }
     
+    /**
+     * Este metodo genera un archivo PDF con los datos proporcionados sobre la cantidad de entradas vendidas
+     * y los precios de cada tipo de entrada. Utiliza un archivo de plantilla JRXML para el diseño del informe,
+     * que debe estar ubicado en la ruta "JasperSoft/Informe.jrxml". Los parametros del informe incluyen la cantidad
+     * de entradas vendidas y los precios de cada tipo de entrada. El archivo PDF generado se guarda en la ruta "pdf/Informe.pdf".
+     *
+     * @param entradasGeneralesVendidas Cantidad de entradas generales vendidas.
+     * @param entradasVIPVendidas Cantidad de entradas VIP vendidas.
+     * @param abonosVIPVendidos Cantidad de abonos VIP vendidos.
+     * @param precioEntradasGenerales Precio total de las entradas generales vendidas.
+     * @param precioEntradasVIP Precio total de las entradas VIP vendidas.
+     * @param precioAbonosVIP Precio total de los abonos VIP vendidos.
+     */
     private void generarPDF(String entradasGeneralesVendidas, String entradasVIPVendidas, String abonosVIPVendidos,
             String precioEntradasGenerales, String precioEntradasVIP, String precioAbonosVIP) {
         try {
@@ -410,6 +514,12 @@ public class InterfazServidor {
         }
     }
     
+    /**
+     * Este metodo busca el archivo PDF generado en el directorio "pdf/" y lo abre utilizando el programa
+     * predeterminado para archivos PDF en el sistema. Si el directorio y el archivo existen, se utiliza
+     * la clase Desktop para abrir el archivo PDF. En caso de no encontrar el archivo o si ocurre algun error
+     * al intentar abrirlo, se maneja la excepcion IOException y se imprime el rastreo de la pila.
+     */
     private void mostrarPDF() {
         try {
             File pdfDirectory = new File("pdf/");
